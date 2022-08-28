@@ -1,0 +1,40 @@
+{
+    "env": {
+    "es2021": true,
+    "node": true,
+    "jest/globals": true
+  },
+    "extends": [
+      "plugin:prettier/recommended",
+      "standard"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module",
+      "project": "./tsconfig.json"
+    },
+    "plugins": [ "@typescript-eslint", "prettier", "jest" ],
+    "rules": {
+    "@typescript-eslint/promise-function-async": 2,
+    "@typescript-eslint/require-await": 2,
+    "@typescript-eslint/no-redeclare": ["error"],
+    "brace-style": "off",
+    "camelcase": 0,
+    "comma-dangle": ["error", "always-multiline"],
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
+    "no-multiple-empty-lines": 0,
+    "no-redeclare": "off",
+    "no-useless-constructor": 0,
+    "prettier/prettier": ["error", {}, { "usePrettierrc": true }],
+    "semi": 0,
+    "space-before-function-paren": [
+      "error",
+      { "anonymous": "never", "named": "never", "asyncArrow": "always" }
+    ]
+  }
+}
