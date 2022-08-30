@@ -12,8 +12,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "target": "es2021",
-    "rootDir": "src",
+    "rootDirs": ["src", "tests"],
     "strict": true,
   },
-  "include": ["src"]
+  "include": ["src", "tests"]
 }

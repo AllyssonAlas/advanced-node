@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start": "node dist/main/api",
-    "build": "rimraf dist && tsc",
+    "build": "rimraf dist && tsc -p tsconfig-build.json",
     "lint": "yarn eslint . --ext ts",
     "lint:fix": "yarn lint -- --fix",
     "prepare": "yarn husky install",
