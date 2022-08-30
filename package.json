@@ -32,6 +32,8 @@
   "scripts": {
     "start": "node dist/main/api",
     "build": "rimraf dist && tsc",
+    "lint": "yarn eslint . --ext ts",
+    "lint:fix": "yarn lint -- --fix",
     "prepare": "yarn husky install",
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:coverage": "yarn test -- --coverage",
