@@ -17,7 +17,6 @@
     "plugins": [ "@typescript-eslint", "prettier", "jest" ],
     "rules": {
     "@typescript-eslint/promise-function-async": 2,
-    "@typescript-eslint/require-await": 2,
     "@typescript-eslint/no-redeclare": ["error"],
     "brace-style": "off",
     "camelcase": 0,
