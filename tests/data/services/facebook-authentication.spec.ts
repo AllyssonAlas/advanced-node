@@ -42,6 +42,14 @@ describe('FacebookAuthenticationService', () => {
     expect(facebookApi.loadUser).toHaveBeenCalledTimes(1);
   });
 
+  it('Should rethrow if FacebookApi throws', async () => {
+    facebookApi.loadUser.mockRejectedValueOnce(new Error('fb_error'));
+
+    const promise = sut.perform({ token });
+
+    await expect(promise).rejects.toThrowError(new Error('fb_error'));
+  });
+
   it('Should return AuthenticationError when FacebookApi returns undefined', async () => {
     facebookApi.loadUser.mockResolvedValueOnce(undefined);
 
@@ -57,6 +65,14 @@ describe('FacebookAuthenticationService', () => {
     expect(userAccountRepo.load).toHaveBeenCalledTimes(1);
   });
 
+  it('Should rethrow if LoadUserAccountRepo throws', async () => {
+    userAccountRepo.load.mockRejectedValueOnce(new Error('load_error'));
+
+    const promise = sut.perform({ token });
+
+    await expect(promise).rejects.toThrowError(new Error('load_error'));
+  });
+
   it('Should call SaveFacebookAccountRepository with correct FacebookAccount', async () => {
     const facebookAccountStub = jest.fn().mockImplementation(() => ({ any: 'any' }));
     mocked(FacebookAccount).mockImplementation(facebookAccountStub);
@@ -67,6 +83,14 @@ describe('FacebookAuthenticationService', () => {
     expect(userAccountRepo.saveWithFacebook).toHaveBeenCalledTimes(1);
   });
 
+  it('Should rethrow if SaveFacebookAccountRepository throws', async () => {
+    userAccountRepo.saveWithFacebook.mockRejectedValueOnce(new Error('save_error'));
+
+    const promise = sut.perform({ token });
+
+    await expect(promise).rejects.toThrowError(new Error('save_error'));
+  });
+
   it('Should call TokenGenerator with correct params', async () => {
     await sut.perform({ token });
 
@@ -75,6 +99,14 @@ describe('FacebookAuthenticationService', () => {
       expirationInMs: AccessToken.expirationInMs,
     });
     expect(crypto.generateToken).toHaveBeenCalledTimes(1);
+  });
+
+  it('Should rethrow if TokenGenerator throws', async () => {
+    crypto.generateToken.mockRejectedValueOnce(new Error('token_error'));
+
+    const promise = sut.perform({ token });
+
+    await expect(promise).rejects.toThrowError(new Error('token_error'));
   });
 
   it('Should return an AccessToken on success', async () => {
