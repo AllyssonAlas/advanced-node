@@ -1,4 +1,5 @@
 module.exports = {
+  clearMocks: true,
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
   coverageDirectory: "coverage",
   coverageProvider: "babel",
