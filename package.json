@@ -5,6 +5,7 @@
   "author": "Allysson <allyssonmgs@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/jest": "^26.0.24",
     "@types/module-alias": "^2.0.1",
     "@types/node": "^18.7.11",
@@ -42,6 +43,7 @@
     "test:watch": "yarn test -- --watch"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "rimraf": "^3.0.2"
   }
 }
