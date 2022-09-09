@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "baseUrl": "src",
+    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "module": "commonjs",
     "paths": {
