@@ -21,6 +21,7 @@
     "brace-style": "off",
     "camelcase": 0,
     "comma-dangle": ["error", "always-multiline"],
+    "indent": ["error", 2, { "ignoredNodes": ["PropertyDefinition"] }],
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
