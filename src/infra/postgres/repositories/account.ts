@@ -6,10 +6,18 @@ import {
 } from '@/data/contracts/repositories';
 import { PgUser } from '@/infra/postgres/entities';
 
-export class PgUserAccountRepository implements LoadUserAccountRepository {
-  async load(params: LoadUserAccountRepository.Params): Promise<LoadUserAccountRepository.Result> {
-    const pgUserRepo = getRepository(PgUser);
-    const pgUser = await pgUserRepo.findOne({ email: params.email });
+type LoadParams = LoadUserAccountRepository.Params;
+type LoadResult = LoadUserAccountRepository.Result;
+type SavaParams = SaveFacebookAccountRepository.Params;
+type SavaResult = SaveFacebookAccountRepository.Result;
+
+// eslint-disable-next-line prettier/prettier
+export class PgUserAccountRepository implements LoadUserAccountRepository, SaveFacebookAccountRepository
+{
+  private readonly pgUserRepo = getRepository(PgUser);
+
+  async load(params: LoadParams): Promise<LoadResult> {
+    const pgUser = await this.pgUserRepo.findOne(params);
     if (pgUser) {
       return {
         id: pgUser.id.toString(),
@@ -18,19 +26,22 @@ export class PgUserAccountRepository implements LoadUserAccountRepository {
     }
   }
 
-  async saveWithFacebook(params: SaveFacebookAccountRepository.Params): Promise<void> {
-    const pgUserRepo = getRepository(PgUser);
+  async saveWithFacebook(params: SavaParams): Promise<SavaResult> {
+    let id: string;
     if (!params.id) {
-      await pgUserRepo.save({
-        email: params.email,
+      const pgUser = await this.pgUserRepo.save({
         name: params.name,
+        email: params.email,
         facebookId: params.facebookId,
       });
+      id = pgUser.id.toString();
     } else {
-      await pgUserRepo.update(
-        { id: parseInt(params.id) },
+      id = params.id;
+      await this.pgUserRepo.update(
+        { id: parseInt(id) },
         { name: params.name, facebookId: params.facebookId },
       );
     }
+    return { id };
   }
 }
