@@ -1,5 +1,6 @@
-import { AuthenticationError } from '@/domain/errors';
+import { AccessToken } from '@/domain/models';
 import { FacebookAuthentication } from '@/domain/features';
+import { AuthenticationError } from '@/domain/errors';
 
 type HttpResponse = {
   statusCode: number;
@@ -16,10 +17,19 @@ export class FacebookLoginController {
         data: new Error('The field token is required'),
       };
     }
-    await this.facebookAuthentication.perform({ token: httpRequest.token });
-    return {
-      statusCode: 401,
-      data: new AuthenticationError(),
-    };
+    const result = await this.facebookAuthentication.perform({ token: httpRequest.token });
+    if (result instanceof AccessToken) {
+      return {
+        statusCode: 200,
+        data: {
+          accessToken: result.value,
+        },
+      };
+    } else {
+      return {
+        statusCode: 401,
+        data: new AuthenticationError(),
+      };
+    }
   }
 }
