@@ -1,19 +1,8 @@
 import { AccessToken } from '@/domain/models';
 import { FacebookAuthentication } from '@/domain/features';
 import { AuthenticationError } from '@/domain/errors';
-
-type HttpResponse = {
-  statusCode: number;
-  data: any;
-};
-
-export class ServerError extends Error {
-  constructor(error?: Error) {
-    super('Server failed. Try again later');
-    this.name = 'ServerError';
-    this.stack = error?.stack;
-  }
-}
+import { HttpResponse } from '@/application/helpers';
+import { ServerError } from '@/application/errors';
 
 export class FacebookLoginController {
   constructor(private readonly facebookAuthentication: FacebookAuthentication) {}
