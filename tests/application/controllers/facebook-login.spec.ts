@@ -3,7 +3,7 @@ import { mock, MockProxy } from 'jest-mock-extended';
 import { AccessToken } from '@/domain/models';
 import { AuthenticationError } from '@/domain/errors';
 import { FacebookAuthentication } from '@/domain/features';
-import { FacebookLoginController } from '@/application/controllers';
+import { FacebookLoginController, ServerError } from '@/application/controllers';
 
 describe('FacebookLoginController', () => {
   let sut: FacebookLoginController;
@@ -70,6 +70,17 @@ describe('FacebookLoginController', () => {
       data: {
         accessToken: 'any_value',
       },
+    });
+  });
+
+  it('Should return 500 if FacebookAuthentication throws', async () => {
+    const error = new Error('infra_error');
+    facebookAuth.perform.mockRejectedValueOnce(error);
+    const httpResponse = await sut.handle({ token: 'any_value' });
+
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      data: new ServerError(error),
     });
   });
 });
