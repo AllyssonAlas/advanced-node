@@ -1,17 +1,13 @@
 import { AccessToken } from '@/domain/models';
 import { FacebookAuthentication } from '@/domain/features';
 import { ok, badRequest, HttpResponse, serverError, unauthorized } from '@/application/helpers';
-import { RequiredStringValidator } from '@/application/validation';
+import { RequiredStringValidator, ValidationComposite } from '@/application/validation';
 
 type HttpRequest = {
   token: string;
 };
 
-type Model =
-  | Error
-  | {
-      accessToken: string;
-    };
+type Model = Error | { accessToken: string };
 
 export class FacebookLoginController {
   constructor(private readonly facebookAuthentication: FacebookAuthentication) {}
@@ -35,7 +31,8 @@ export class FacebookLoginController {
   }
 
   private validate(httpRequest: HttpRequest): Error | undefined {
-    const validator = new RequiredStringValidator(httpRequest.token, 'token');
+    const validators = [new RequiredStringValidator(httpRequest.token, 'token')];
+    const validator = new ValidationComposite(validators);
     return validator.validate();
   }
 }
