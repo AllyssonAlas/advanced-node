@@ -1,6 +1,4 @@
-export interface Validator {
-  validate: () => Error | undefined;
-}
+import { Validator } from '@/application/validation';
 
 export class ValidationComposite implements Validator {
   constructor(private readonly validators: Validator[]) {}
