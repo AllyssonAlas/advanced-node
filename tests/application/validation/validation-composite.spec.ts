@@ -26,6 +26,13 @@ describe('ValidationComposite', () => {
     expect(error).toBeUndefined();
   });
 
+  it('Should return an error if a validation fails', () => {
+    validator2.validate.mockReturnValueOnce(new Error('error_2'));
+    const error = sut.validate();
+
+    expect(error).toEqual(new Error('error_2'));
+  });
+
   it('Should return the first error', () => {
     validator1.validate.mockReturnValueOnce(new Error('error_1'));
     validator2.validate.mockReturnValueOnce(new Error('error_2'));
