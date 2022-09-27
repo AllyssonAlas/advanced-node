@@ -3,13 +3,13 @@ import { mocked } from 'ts-jest/utils';
 
 import { AccessToken, FacebookAccount } from '@/domain/models';
 import { AuthenticationError } from '@/domain/errors';
-import { FacebookAuthenticationService } from '@/data/services';
+import { FacebookAuthenticationService } from '@/domain/services';
 import {
   SaveFacebookAccountRepository,
   LoadUserAccountRepository,
-} from '@/data/contracts/repositories';
-import { LoadFacebookUserApi } from '@/data/contracts/apis';
-import { TokenGenerator } from '@/data/contracts/crypto';
+} from '@/domain/contracts/repositories';
+import { LoadFacebookUserApi } from '@/domain/contracts/apis';
+import { TokenGenerator } from '@/domain/contracts/crypto';
 
 jest.mock('@/domain/models/facebook-account');
 

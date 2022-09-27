@@ -3,7 +3,7 @@ import { getRepository } from 'typeorm';
 import {
   LoadUserAccountRepository,
   SaveFacebookAccountRepository,
-} from '@/data/contracts/repositories';
+} from '@/domain/contracts/repositories';
 import { PgUser } from '@/infra/postgres/entities';
 
 type LoadParams = LoadUserAccountRepository.Params;
