@@ -1,4 +1,4 @@
-import { AccessToken } from '@/domain/models';
+import { AccessToken } from '@/domain/entities';
 import { FacebookAuthentication } from '@/domain/features';
 import { Controller } from '@/application/controllers';
 import { ValidationBuilder as Builder, Validator } from '@/application/validation';
