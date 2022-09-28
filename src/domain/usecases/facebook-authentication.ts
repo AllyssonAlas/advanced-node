@@ -1,6 +1,5 @@
 import { AccessToken, FacebookAccount } from '@/domain/entities';
 import { AuthenticationError } from '@/domain/entities/errors';
-import { FacebookAuthentication } from '@/domain/features';
 import {
   SaveFacebookAccountRepository,
   LoadUserAccountRepository,
@@ -8,26 +7,28 @@ import {
 import { LoadFacebookUserApi } from '@/domain/contracts/apis';
 import { TokenGenerator } from '@/domain/contracts/crypto';
 
-export class FacebookAuthenticationUsecase implements FacebookAuthentication {
-  constructor(
-    private readonly facebookApi: LoadFacebookUserApi,
-    private readonly userAccountRepository: LoadUserAccountRepository &
-      SaveFacebookAccountRepository,
-    private readonly crypto: TokenGenerator,
-  ) {}
+export type FacebookAuthentication = (params: {
+  token: string;
+}) => Promise<AccessToken | AuthenticationError>;
+type Setup = (
+  facebookApi: LoadFacebookUserApi,
+  userAccountRepository: LoadUserAccountRepository & SaveFacebookAccountRepository,
+  crypto: TokenGenerator,
+) => FacebookAuthentication;
 
-  async perform(params: FacebookAuthentication.Params): Promise<FacebookAuthentication.Result> {
-    const fbData = await this.facebookApi.loadUser(params);
+export const setupFacebookAuthentication: Setup = (facebookApi, userAccountRepository, crypto) => {
+  return async (params) => {
+    const fbData = await facebookApi.loadUser(params);
     if (!fbData) {
       return new AuthenticationError();
     }
-    const accountData = await this.userAccountRepository.load({ email: fbData.email });
+    const accountData = await userAccountRepository.load({ email: fbData.email });
     const facebookAccount = new FacebookAccount(fbData, accountData);
-    const { id } = await this.userAccountRepository.saveWithFacebook(facebookAccount);
-    const token = await this.crypto.generateToken({
+    const { id } = await userAccountRepository.saveWithFacebook(facebookAccount);
+    const token = await crypto.generateToken({
       key: id,
       expirationInMs: AccessToken.expirationInMs,
     });
     return new AccessToken(token);
-  }
-}
+  };
+};

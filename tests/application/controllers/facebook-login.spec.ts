@@ -1,21 +1,18 @@
-import { mock, MockProxy } from 'jest-mock-extended';
-
 import { AccessToken } from '@/domain/entities';
 import { AuthenticationError } from '@/domain/entities/errors';
-import { FacebookAuthentication } from '@/domain/features';
 import { FacebookLoginController } from '@/application/controllers';
 import { UnauthorizedError } from '@/application/errors';
 import { RequiredStringValidator } from '@/application/validation';
 
 describe('FacebookLoginController', () => {
   let sut: FacebookLoginController;
-  let facebookAuth: MockProxy<FacebookAuthentication>;
+  let facebookAuth: jest.Mock;
   let token: string;
 
   beforeAll(() => {
     token = 'any_token';
-    facebookAuth = mock();
-    facebookAuth.perform.mockResolvedValue(new AccessToken('any_value'));
+    facebookAuth = jest.fn();
+    facebookAuth.mockResolvedValue(new AccessToken('any_value'));
   });
 
   beforeEach(() => {
@@ -31,28 +28,20 @@ describe('FacebookLoginController', () => {
   it('Should call FacebookAuthentication with correct params', async () => {
     await sut.handle({ token });
 
-    expect(facebookAuth.perform).toHaveBeenCalledWith({ token });
-    expect(facebookAuth.perform).toHaveBeenCalledTimes(1);
+    expect(facebookAuth).toHaveBeenCalledWith({ token });
+    expect(facebookAuth).toHaveBeenCalledTimes(1);
   });
 
   it('Should return 401 if FacebookAuthentication fails', async () => {
-    facebookAuth.perform.mockResolvedValueOnce(new AuthenticationError());
+    facebookAuth.mockResolvedValueOnce(new AuthenticationError());
     const httpResponse = await sut.handle({ token });
 
-    expect(httpResponse).toEqual({
-      statusCode: 401,
-      data: new UnauthorizedError(),
-    });
+    expect(httpResponse).toEqual({ statusCode: 401, data: new UnauthorizedError() });
   });
 
   it('Should return 200 if FacebookAuthentication succeeds', async () => {
     const httpResponse = await sut.handle({ token });
 
-    expect(httpResponse).toEqual({
-      statusCode: 200,
-      data: {
-        accessToken: 'any_value',
-      },
-    });
+    expect(httpResponse).toEqual({ statusCode: 200, data: { accessToken: 'any_value' } });
   });
 });
