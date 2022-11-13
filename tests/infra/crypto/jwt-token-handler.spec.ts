@@ -9,10 +9,12 @@ describe('JwtTokenHandler', () => {
   let fakeJwt: jest.Mocked<typeof jwt>;
   let secret: string;
   let token: string;
+  let key: string;
 
   beforeAll(() => {
     fakeJwt = jwt as jest.Mocked<typeof jwt>;
     secret = 'any_secret';
+    key = 'any_key';
   });
 
   beforeEach(() => {
@@ -20,11 +22,9 @@ describe('JwtTokenHandler', () => {
   });
 
   describe('generateToken', () => {
-    let key: string;
     let expirationInMs: number;
 
     beforeAll(() => {
-      key = 'any_key';
       expirationInMs = 1000;
       fakeJwt.sign.mockImplementation(() => token);
     });
@@ -54,11 +54,21 @@ describe('JwtTokenHandler', () => {
   });
 
   describe('validateToken', () => {
+    beforeAll(() => {
+      fakeJwt.verify.mockImplementation(() => ({ key }));
+    });
+
     it('Should call verify with correct params', async () => {
       await sut.validateToken({ token });
 
       expect(fakeJwt.verify).toHaveBeenCalledWith(token, secret);
       expect(fakeJwt.verify).toHaveBeenCalledTimes(1);
+    });
+
+    it('Should return the key provided to sign', async () => {
+      const generatedKey = await sut.validateToken({ token });
+
+      expect(generatedKey).toBe(key);
     });
   });
 });
