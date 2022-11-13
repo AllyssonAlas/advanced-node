@@ -1,19 +1,21 @@
 import { Authorize } from '@/domain/usecases';
-import { forbidden, HttpResponse } from '@/application/helpers';
+import { forbidden, HttpResponse, ok } from '@/application/helpers';
 import { RequiredStringValidator } from '@/application/validation';
 
 type HttpRequest = { authorization: string };
+type Model = Error | { userId: string };
 
 export class AuthenticationMiddleware {
   constructor(private readonly authorize: Authorize) {}
 
-  async handle({ authorization }: HttpRequest): Promise<HttpResponse<Error> | undefined> {
+  async handle({ authorization }: HttpRequest): Promise<HttpResponse<Model>> {
     try {
       const error = new RequiredStringValidator(authorization, 'authorization').validate();
       if (error) {
         return forbidden();
       }
-      await this.authorize({ token: authorization });
+      const userId = await this.authorize({ token: authorization });
+      return ok({ userId });
     } catch (error) {
       return forbidden();
     }
