@@ -9,5 +9,6 @@ export interface Middleware {
 type Adapter = (middleware: Middleware) => RequestHandler;
 
 export const adaptExpressMiddleware: Adapter = (middleware) => async (req, res, next) => {
-  await middleware.handle({ ...req.headers });
+  const { statusCode, data } = await middleware.handle({ ...req.headers });
+  res.status(statusCode).json(data);
 };
