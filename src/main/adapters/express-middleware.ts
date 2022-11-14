@@ -1,10 +1,6 @@
 import { RequestHandler } from 'express';
 
-import { HttpResponse } from '@/application/helpers';
-
-export interface Middleware {
-  handle: (httpRequest: any) => Promise<HttpResponse>;
-}
+import { Middleware } from '@/application/middlewares';
 
 type Adapter = (middleware: Middleware) => RequestHandler;
 

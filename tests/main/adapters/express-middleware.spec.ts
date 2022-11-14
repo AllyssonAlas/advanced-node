@@ -2,7 +2,8 @@ import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { mock, MockProxy } from 'jest-mock-extended';
 
-import { Middleware, adaptExpressMiddleware } from '@/main/adapters';
+import { Middleware } from '@/application/middlewares';
+import { adaptExpressMiddleware } from '@/main/adapters';
 
 describe('ExpressMiddleware', () => {
   let req: Request;
