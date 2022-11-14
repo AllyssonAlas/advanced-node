@@ -17,8 +17,13 @@ describe('ExpressMiddleware', () => {
     next = getMockRes().next;
     middleware = mock();
     middleware.handle.mockResolvedValue({
-      statusCode: 500,
-      data: { error: 'any_error' },
+      statusCode: 200,
+      data: {
+        emptyProperty: '',
+        nullProp: null,
+        undefinedProp: undefined,
+        prop: 'any_value',
+      },
     });
   });
 
@@ -43,11 +48,23 @@ describe('ExpressMiddleware', () => {
   });
 
   it('Should respond with correct error and statusCode', async () => {
+    middleware.handle.mockResolvedValueOnce({
+      statusCode: 500,
+      data: { error: 'any_error' },
+    });
+
     await sut(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.status).toHaveBeenCalledTimes(1);
     expect(res.json).toHaveBeenCalledWith({ error: 'any_error' });
     expect(res.json).toHaveBeenCalledTimes(1);
+  });
+
+  it('Should add data to req.locals', async () => {
+    await sut(req, res, next);
+
+    expect(req.locals).toEqual({ prop: 'any_value' });
+    expect(next).toHaveBeenCalledTimes(1);
   });
 });
