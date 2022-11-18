@@ -1,18 +1,15 @@
 import { getRepository } from 'typeorm';
 
-import {
-  LoadUserAccountRepository,
-  SaveFacebookAccountRepository,
-} from '@/domain/contracts/repositories';
+import { LoadUserAccount, SaveFacebookAccount } from '@/domain/contracts/repositories';
 import { PgUser } from '@/infra/postgres/entities';
 
-type LoadParams = LoadUserAccountRepository.Params;
-type LoadResult = LoadUserAccountRepository.Result;
-type SavaParams = SaveFacebookAccountRepository.Params;
-type SavaResult = SaveFacebookAccountRepository.Result;
+type LoadParams = LoadUserAccount.Params;
+type LoadResult = LoadUserAccount.Result;
+type SavaParams = SaveFacebookAccount.Params;
+type SavaResult = SaveFacebookAccount.Result;
 
 // eslint-disable-next-line prettier/prettier
-export class PgUserAccountRepository implements LoadUserAccountRepository, SaveFacebookAccountRepository
+export class PgUserAccountRepository implements LoadUserAccount, SaveFacebookAccount
 {
   async load(params: LoadParams): Promise<LoadResult> {
     const pgUserRepo = getRepository(PgUser);
