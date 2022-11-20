@@ -1,19 +1,19 @@
 export interface SaveProfilePicture {
-  savePicture: (params: SaveProfilePicture.Params) => Promise<void>;
+  savePicture: (input: SaveProfilePicture.Input) => Promise<void>;
 }
 
 export namespace SaveProfilePicture {
-  export type Params = {
+  export type Input = {
     pictureUrl: string | undefined;
+    initials?: string;
   };
 }
 
 export interface LoadUserProfile {
-  load: (params: LoadUserProfile.Params) => Promise<void>;
+  load: (input: LoadUserProfile.Input) => Promise<LoadUserProfile.Output>;
 }
 
 export namespace LoadUserProfile {
-  export type Params = {
-    id: string;
-  };
+  export type Input = { id: string };
+  export type Output = { name?: string };
 }
