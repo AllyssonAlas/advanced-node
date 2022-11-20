@@ -22,7 +22,7 @@ export interface UUIDGenerator {
 }
 
 type Input = { id: string; file: Buffer };
-type ChangeProfilePicture = (input: Input) => Promise<void>;
+export type ChangeProfilePicture = (input: Input) => Promise<void>;
 type Setup = (fileStorage: UploadFile, crypto: UUIDGenerator) => ChangeProfilePicture;
 
 export const setupChangeProfilePicture: Setup = (fileStorage, crypto) => {
