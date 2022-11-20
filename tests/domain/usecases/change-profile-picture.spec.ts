@@ -1,11 +1,7 @@
 import { mock, MockProxy } from 'jest-mock-extended';
 
-import {
-  setupChangeProfilePicture,
-  UploadFile,
-  UUIDGenerator,
-  ChangeProfilePicture,
-} from '@/domain/usecases';
+import { setupChangeProfilePicture, ChangeProfilePicture } from '@/domain/usecases';
+import { UploadFile, UUIDGenerator } from '@/domain/contracts/gateways';
 
 describe('ChangeProfilePicture', () => {
   let uuid: string;
