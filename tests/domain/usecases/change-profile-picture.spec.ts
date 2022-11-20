@@ -19,6 +19,7 @@ describe('ChangeProfilePicture', () => {
     fileStorage.upload.mockResolvedValue('any_url');
     crypto = mock();
     userProfileRepo = mock();
+    userProfileRepo.load.mockResolvedValue({ name: 'Allysson Alas Santos' });
     crypto.uuid.mockReturnValue(uuid);
   });
 
@@ -50,9 +51,50 @@ describe('ChangeProfilePicture', () => {
   });
 
   it('Should call SaveUserPicture with correct input when file is undefined', async () => {
+    userProfileRepo.load.mockResolvedValueOnce({ name: 'allysson Alas santos' });
+
     await sut({ id: 'any_id', file: undefined });
 
-    expect(userProfileRepo.savePicture).toHaveBeenCalledWith({ pictureUrl: undefined });
+    expect(userProfileRepo.savePicture).toHaveBeenCalledWith({
+      pictureUrl: undefined,
+      initials: 'AS',
+    });
+    expect(userProfileRepo.savePicture).toHaveBeenCalledTimes(1);
+  });
+
+  it('Should call SaveUserPicture with correct input when file is undefined and user has only one name', async () => {
+    userProfileRepo.load.mockResolvedValueOnce({ name: 'allysson' });
+
+    await sut({ id: 'any_id', file: undefined });
+
+    expect(userProfileRepo.savePicture).toHaveBeenCalledWith({
+      pictureUrl: undefined,
+      initials: 'AL',
+    });
+    expect(userProfileRepo.savePicture).toHaveBeenCalledTimes(1);
+  });
+
+  it('Should call SaveUserPicture with correct input when file is undefined and user has only one letter', async () => {
+    userProfileRepo.load.mockResolvedValueOnce({ name: 'a' });
+
+    await sut({ id: 'any_id', file: undefined });
+
+    expect(userProfileRepo.savePicture).toHaveBeenCalledWith({
+      pictureUrl: undefined,
+      initials: 'A',
+    });
+    expect(userProfileRepo.savePicture).toHaveBeenCalledTimes(1);
+  });
+
+  it('Should call SaveUserPicture with correct input when file is undefined and user has no name', async () => {
+    userProfileRepo.load.mockResolvedValueOnce({ name: undefined });
+
+    await sut({ id: 'any_id', file: undefined });
+
+    expect(userProfileRepo.savePicture).toHaveBeenCalledWith({
+      pictureUrl: undefined,
+      initials: undefined,
+    });
     expect(userProfileRepo.savePicture).toHaveBeenCalledTimes(1);
   });
 
