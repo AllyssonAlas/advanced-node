@@ -4,7 +4,7 @@ import { mock, MockProxy } from 'jest-mock-extended';
 import { UserProfile } from '@/domain/entities';
 import { setupChangeProfilePicture, ChangeProfilePicture } from '@/domain/usecases';
 import { UploadFile, UUIDGenerator } from '@/domain/contracts/gateways';
-import { SaveProfilePicture, LoadUserProfile } from '@/domain/contracts/repositories';
+import { SaveUserPicture, LoadUserProfile } from '@/domain/contracts/repositories';
 
 jest.mock('@/domain/entities/user-profile');
 
@@ -13,7 +13,7 @@ describe('ChangeProfilePicture', () => {
   let file: Buffer;
   let fileStorage: MockProxy<UploadFile>;
   let crypto: MockProxy<UUIDGenerator>;
-  let userProfileRepo: MockProxy<SaveProfilePicture & LoadUserProfile>;
+  let userProfileRepo: MockProxy<SaveUserPicture & LoadUserProfile>;
   let sut: ChangeProfilePicture;
 
   beforeAll(() => {
@@ -64,7 +64,23 @@ describe('ChangeProfilePicture', () => {
     expect(userProfileRepo.load).not.toHaveBeenCalled();
   });
 
-  it('Should return correct daa on succes', async () => {
+  it('Should return correct data on succes', async () => {
+    mocked(UserProfile).mockImplementationOnce((id) => ({
+      setPicture: jest.fn(),
+      id: 'any_id',
+      pictureUrl: 'any_url',
+      initials: 'any_initias',
+    }));
+
+    const result = await sut({ id: 'any_id', file });
+
+    expect(result).toMatchObject({
+      pictureUrl: 'any_url',
+      initials: 'any_initias',
+    });
+  });
+
+  it('Should call DeleteFile when file exists and  SaveUserPicture throws', async () => {
     mocked(UserProfile).mockImplementationOnce((id) => ({
       setPicture: jest.fn(),
       id: 'any_id',
