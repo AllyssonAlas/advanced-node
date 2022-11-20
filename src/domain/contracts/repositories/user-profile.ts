@@ -3,10 +3,7 @@ export interface SaveProfilePicture {
 }
 
 export namespace SaveProfilePicture {
-  export type Input = {
-    pictureUrl: string | undefined;
-    initials?: string;
-  };
+  export type Input = { id: string; pictureUrl?: string | undefined; initials?: string };
 }
 
 export interface LoadUserProfile {

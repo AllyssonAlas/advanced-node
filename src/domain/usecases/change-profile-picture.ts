@@ -1,3 +1,4 @@
+import { UserProfile } from '@/domain/entities';
 import { UploadFile, UUIDGenerator } from '@/domain/contracts/gateways';
 import { SaveProfilePicture, LoadUserProfile } from '@/domain/contracts/repositories';
 
@@ -11,23 +12,14 @@ type Setup = (
 
 export const setupChangeProfilePicture: Setup = (fileStorage, crypto, userProfileRepo) => {
   return async ({ id, file }) => {
-    let pictureUrl: string | undefined;
-    let initials: string | undefined;
+    const data: { pictureUrl?: string; name?: string } = {};
     if (file) {
-      pictureUrl = await fileStorage.upload({ file, key: crypto.uuid({ key: id }) });
+      data.pictureUrl = await fileStorage.upload({ file, key: crypto.uuid({ key: id }) });
     } else {
-      const { name } = await userProfileRepo.load({ id });
-      if (name) {
-        const firstLetters = name.match(/\b(.)/g) ?? [];
-        if (firstLetters.length > 1) {
-          initials = `${firstLetters.shift()?.toUpperCase() ?? ''}${
-            firstLetters.pop()?.toUpperCase() ?? ''
-          }`;
-        } else {
-          initials = name.substring(0, 2).toUpperCase();
-        }
-      }
+      data.name = (await userProfileRepo.load({ id })).name;
     }
-    await userProfileRepo.savePicture({ pictureUrl, initials });
+    const userProfile = new UserProfile(id);
+    userProfile.setPicture(data);
+    await userProfileRepo.savePicture(userProfile);
   };
 };
