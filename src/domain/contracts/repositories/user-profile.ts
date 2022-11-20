@@ -4,6 +4,6 @@ export interface SaveProfilePicture {
 
 export namespace SaveProfilePicture {
   export type Params = {
-    pictureUrl: string;
+    pictureUrl: string | undefined;
   };
 }
