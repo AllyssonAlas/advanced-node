@@ -5,7 +5,7 @@ import { LoadFacebookUser, TokenGenerator } from '@/domain/contracts/gateways';
 
 type Input = { token: string };
 type Output = { accessToken: string };
-export type FacebookAuthentication = (params: Input) => Promise<Output>;
+export type FacebookAuthentication = (input: Input) => Promise<Output>;
 type Setup = (
   facebook: LoadFacebookUser,
   userAccountRepository: LoadUserAccount & SaveFacebookAccount,
@@ -13,8 +13,8 @@ type Setup = (
 ) => FacebookAuthentication;
 
 export const setupFacebookAuthentication: Setup = (facebook, userAccountRepository, token) => {
-  return async (params) => {
-    const fbData = await facebook.loadUser(params);
+  return async (input) => {
+    const fbData = await facebook.loadUser(input);
     if (!fbData) {
       throw new AuthenticationError();
     }

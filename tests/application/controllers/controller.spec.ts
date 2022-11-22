@@ -8,13 +8,13 @@ import { HttpResponse } from '@/application/helpers';
 jest.mock('@/application/validation/validation-composite');
 
 class ControllerStub extends Controller {
-  result: HttpResponse = {
+  output: HttpResponse = {
     statusCode: 200,
     data: 'any_data',
   };
 
   async perform(httpRequest: any): Promise<HttpResponse> {
-    return this.result;
+    return this.output;
   }
 }
 
@@ -52,9 +52,9 @@ describe('Controller', () => {
     });
   });
 
-  it('Should return same result as perform', async () => {
+  it('Should return same output as perform', async () => {
     const httpResponse = await sut.handle('any_value');
 
-    expect(httpResponse).toEqual(sut.result);
+    expect(httpResponse).toEqual(sut.output);
   });
 });

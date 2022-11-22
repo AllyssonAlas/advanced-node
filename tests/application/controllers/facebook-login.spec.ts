@@ -24,7 +24,7 @@ describe('FacebookLoginController', () => {
     expect(validators).toEqual([new RequiredStringValidator('any_token', 'token')]);
   });
 
-  it('Should call FacebookAuthentication with correct params', async () => {
+  it('Should call FacebookAuthentication with correct input', async () => {
     await sut.handle({ token });
 
     expect(facebookAuth).toHaveBeenCalledWith({ token });

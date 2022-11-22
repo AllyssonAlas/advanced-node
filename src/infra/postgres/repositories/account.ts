@@ -3,17 +3,17 @@ import { getRepository } from 'typeorm';
 import { LoadUserAccount, SaveFacebookAccount } from '@/domain/contracts/repositories';
 import { PgUser } from '@/infra/postgres/entities';
 
-type LoadParams = LoadUserAccount.Params;
-type LoadResult = LoadUserAccount.Result;
-type SavaParams = SaveFacebookAccount.Params;
-type SavaResult = SaveFacebookAccount.Result;
+type LoadParams = LoadUserAccount.Input;
+type LoadResult = LoadUserAccount.Output;
+type SavaParams = SaveFacebookAccount.Input;
+type SavaResult = SaveFacebookAccount.Output;
 
 // eslint-disable-next-line prettier/prettier
 export class PgUserAccountRepository implements LoadUserAccount, SaveFacebookAccount
 {
-  async load(params: LoadParams): Promise<LoadResult> {
+  async load(input: LoadParams): Promise<LoadResult> {
     const pgUserRepo = getRepository(PgUser);
-    const pgUser = await pgUserRepo.findOne(params);
+    const pgUser = await pgUserRepo.findOne(input);
     if (pgUser) {
       return {
         id: pgUser.id.toString(),
@@ -22,23 +22,16 @@ export class PgUserAccountRepository implements LoadUserAccount, SaveFacebookAcc
     }
   }
 
-  async saveWithFacebook(params: SavaParams): Promise<SavaResult> {
+  async saveWithFacebook({ id, name, email, facebookId }: SavaParams): Promise<SavaResult> {
     const pgUserRepo = getRepository(PgUser);
-    let id: string;
-    if (!params.id) {
-      const pgUser = await pgUserRepo.save({
-        name: params.name,
-        email: params.email,
-        facebookId: params.facebookId,
-      });
-      id = pgUser.id.toString();
+    let resultId: string;
+    if (!id) {
+      const pgUser = await pgUserRepo.save({ name, email, facebookId });
+      resultId = pgUser.id.toString();
     } else {
-      id = params.id;
-      await pgUserRepo.update(
-        { id: parseInt(id) },
-        { name: params.name, facebookId: params.facebookId },
-      );
+      resultId = id;
+      await pgUserRepo.update({ id: parseInt(id) }, { name, facebookId });
     }
-    return { id };
+    return { id: resultId };
   }
 }

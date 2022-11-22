@@ -33,9 +33,9 @@ describe('AxiosHttpClient', () => {
     });
 
     it('Should return data on success', async () => {
-      const result = await sut.get({ url, params });
+      const output = await sut.get({ url, params });
 
-      expect(result).toEqual('any_data');
+      expect(output).toEqual('any_data');
     });
 
     it('Should rethrow if get throws ', async () => {
