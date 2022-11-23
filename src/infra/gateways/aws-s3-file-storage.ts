@@ -2,7 +2,7 @@ import { config, S3 } from 'aws-sdk';
 
 import { UploadFile } from '@/domain/contracts/gateways';
 
-export class AwsS3FileStorage {
+export class AwsS3FileStorage implements UploadFile {
   constructor(accessKey: string, secret: string, private readonly bucket: string) {
     config.update({
       credentials: {
@@ -12,8 +12,9 @@ export class AwsS3FileStorage {
     });
   }
 
-  async upload({ key, file }: UploadFile.Input): Promise<void> {
+  async upload({ key, file }: UploadFile.Input): Promise<UploadFile.Output> {
     const s3 = new S3();
     await s3.putObject({ Bucket: this.bucket, Key: key, Body: file, ACL: 'public-read' }).promise();
+    return `http://${this.bucket}.s3.amazonaws.com/${encodeURIComponent(key)}`;
   }
 }
