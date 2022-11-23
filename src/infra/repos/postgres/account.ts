@@ -1,7 +1,7 @@
 import { getRepository } from 'typeorm';
 
 import { LoadUserAccount, SaveFacebookAccount } from '@/domain/contracts/repositories';
-import { PgUser } from '@/infra/postgres/entities';
+import { PgUser } from '@/infra/repos/postgres/entities';
 
 type LoadParams = LoadUserAccount.Input;
 type LoadResult = LoadUserAccount.Output;
