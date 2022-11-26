@@ -14,7 +14,9 @@ describe('SavePictureController', () => {
     mimeType = 'image/png';
     file = { buffer, mimeType };
     userId = 'any_user_id';
-    changeProfilePicture = jest.fn();
+    changeProfilePicture = jest
+      .fn()
+      .mockResolvedValue({ initials: 'any_initials', pictureUrl: 'any_url' });
   });
 
   beforeEach(() => {
@@ -90,5 +92,14 @@ describe('SavePictureController', () => {
 
     expect(changeProfilePicture).toHaveBeenCalledWith({ id: userId, file: buffer });
     expect(changeProfilePicture).toHaveBeenCalledTimes(1);
+  });
+
+  it('Shoud return 200 with valid data', async () => {
+    const httpResponse = await sut.handle({ file, userId });
+
+    expect(httpResponse).toEqual({
+      statusCode: 200,
+      data: { initials: 'any_initials', pictureUrl: 'any_url' },
+    });
   });
 });
