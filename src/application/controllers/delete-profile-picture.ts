@@ -1,6 +1,6 @@
 import { ChangeProfilePicture } from '@/domain/usecases';
 import { HttpResponse, noContent } from '@/application/helpers';
-import { Controller } from './controller';
+import { Controller } from '@/application/controllers';
 
 type HttpRequest = { userId: string };
 
