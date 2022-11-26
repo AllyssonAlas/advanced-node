@@ -1,7 +1,7 @@
 import { HttpResponse, badRequest } from '@/application/helpers';
 import { RequiredFieldError } from '@/application/errors';
 
-type HttpRequest = { file: any };
+type HttpRequest = { file: { buffer: Buffer } };
 type Model = Error;
 
 export class SavePictureController {
