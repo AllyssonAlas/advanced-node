@@ -33,3 +33,10 @@ export class InvalidMimeTypeError extends Error {
     this.name = 'InvalidMimeTypeError';
   }
 }
+
+export class MaxFileSizeError extends Error {
+  constructor(maxSizeInMB: number) {
+    super(`File upload limit size is ${maxSizeInMB}MB`);
+    this.name = 'MaxFileSizeError';
+  }
+}
