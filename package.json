@@ -51,6 +51,7 @@
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:coverage": "yarn test -- --coverage",
     "test:fb-api": "yarn test -- -c ./jest.integration.config.js ./tests/external/facebook-api.test.ts",
+    "test:s3": "yarn test -- -c ./jest.integration.config.js ./tests/external/aws-s3-file-storage.test.ts",
     "test:staged": "yarn test -- --findRelatedTests",
     "test:watch": "yarn test -- --watch"
   },
