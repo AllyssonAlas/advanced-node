@@ -3,7 +3,7 @@ import { UploadFile, DeleteFile, UUIDGenerator } from '@/domain/contracts/gatewa
 import { SaveUserPicture, LoadUserProfile } from '@/domain/contracts/repositories';
 
 type Input = { id: string; file?: { buffer: Buffer; mimeType: string } };
-type Output = { pictureUrl?: string; name?: string };
+type Output = { pictureUrl?: string; initials?: string };
 export type ChangeProfilePicture = (input: Input) => Promise<Output>;
 type Setup = (
   fileStorage: UploadFile & DeleteFile,
