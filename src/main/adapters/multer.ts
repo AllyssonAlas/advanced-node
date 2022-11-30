@@ -15,5 +15,6 @@ export const adaptMulter: RequestHandler = (req, res, next) => {
         file: { buffer: req.file.buffer, mimeType: req.file.mimetype },
       };
     }
+    next();
   });
 };
