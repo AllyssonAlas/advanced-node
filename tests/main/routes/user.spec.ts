@@ -46,4 +46,12 @@ describe('User Routes', () => {
       expect(body).toEqual({ pictureUrl: undefined, initials: 'AA' });
     });
   });
+
+  describe('PUT /users/picture', () => {
+    it('Should return 403 if no authorization header is present', async () => {
+      const { status } = await request(app).put('/api/users/picture');
+
+      expect(status).toBe(403);
+    });
+  });
 });
