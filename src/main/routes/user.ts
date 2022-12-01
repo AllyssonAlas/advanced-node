@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { makeSavePictureController } from '@/main/factories/controllers';
+import { makeSavePictureController } from '@/main/factories/application/controllers';
 import { adaptExpressRoute as adapt, adaptMulter as upload } from '@/main/adapters';
 import { auth } from '@/main/middlewares';
 
