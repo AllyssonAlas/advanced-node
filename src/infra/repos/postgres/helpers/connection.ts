@@ -13,12 +13,8 @@ export class PgConnection {
   }
 
   async connect(): Promise<void> {
-    let connection: Connection;
-    if (getConnectionManager().has('default')) {
-      connection = getConnection();
-    } else {
-      connection = await createConnection();
-    }
+    const isConnectionActive = getConnectionManager().has('default');
+    const connection: Connection = isConnectionActive ? getConnection() : await createConnection();
     connection.createQueryRunner();
   }
 }
