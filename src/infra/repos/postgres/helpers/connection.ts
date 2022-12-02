@@ -28,10 +28,13 @@ export class PgConnection {
   }
 
   async disconnect(): Promise<void> {
-    if (!this.query) {
-      throw new ConnectionNoFoundError();
-    }
+    if (!this.query) throw new ConnectionNoFoundError();
     await getConnection().close();
     this.query = undefined;
+  }
+
+  async openTransaction(): Promise<void> {
+    if (!this.query) throw new ConnectionNoFoundError();
+    await this.query.startTransaction();
   }
 }
