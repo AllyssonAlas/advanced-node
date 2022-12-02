@@ -14,6 +14,7 @@ jest.mock('typeorm', () => ({
 }));
 
 describe('PgConnection', () => {
+  let closeSpy: jest.Mock;
   let hasSpy: jest.Mock;
   let getConnectionManagerSpy: jest.Mock;
   let createQueryRunnerSpy: jest.Mock;
@@ -28,7 +29,11 @@ describe('PgConnection', () => {
     createQueryRunnerSpy = jest.fn();
     createConnectionSpy = jest.fn().mockResolvedValue({ createQueryRunner: createQueryRunnerSpy });
     mocked(createConnection).mockImplementation(createConnectionSpy);
-    getConnectionSpy = jest.fn().mockReturnValue({ createQueryRunner: createQueryRunnerSpy });
+    closeSpy = jest.fn();
+    getConnectionSpy = jest.fn().mockReturnValue({
+      createQueryRunner: createQueryRunnerSpy,
+      close: closeSpy,
+    });
     mocked(getConnection).mockImplementation(getConnectionSpy);
   });
 
@@ -60,5 +65,13 @@ describe('PgConnection', () => {
     expect(getConnectionSpy).toHaveBeenCalledTimes(1);
     expect(createQueryRunnerSpy).toHaveBeenCalledWith();
     expect(createQueryRunnerSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('Should close connection', async () => {
+    await sut.connect();
+    await sut.disconnect();
+
+    expect(closeSpy).toHaveBeenCalledWith();
+    expect(closeSpy).toHaveBeenCalledTimes(1);
   });
 });
