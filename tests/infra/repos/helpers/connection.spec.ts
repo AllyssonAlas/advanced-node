@@ -14,6 +14,7 @@ jest.mock('typeorm', () => ({
 }));
 
 describe('PgConnection', () => {
+  let commitTransactionSpy: jest.Mock;
   let releaseSpy: jest.Mock;
   let startTransactionSpy: jest.Mock;
   let closeSpy: jest.Mock;
@@ -28,11 +29,13 @@ describe('PgConnection', () => {
     hasSpy = jest.fn().mockReturnValue(true);
     getConnectionManagerSpy = jest.fn().mockReturnValue({ has: hasSpy });
     mocked(getConnectionManager).mockImplementation(getConnectionManagerSpy);
+    commitTransactionSpy = jest.fn();
     releaseSpy = jest.fn();
     startTransactionSpy = jest.fn();
     createQueryRunnerSpy = jest.fn().mockReturnValue({
       startTransaction: startTransactionSpy,
       release: releaseSpy,
+      commitTransaction: commitTransactionSpy,
     });
     createConnectionSpy = jest.fn().mockResolvedValue({ createQueryRunner: createQueryRunnerSpy });
     mocked(createConnection).mockImplementation(createConnectionSpy);
@@ -120,6 +123,23 @@ describe('PgConnection', () => {
     const promise = sut.closeTransaction();
 
     expect(releaseSpy).not.toHaveBeenCalled();
+    await expect(promise).rejects.toThrow(new ConnectionNoFoundError());
+  });
+
+  it('Should commit transaction', async () => {
+    await sut.connect();
+    await sut.commit();
+
+    expect(commitTransactionSpy).toHaveBeenCalledWith();
+    expect(commitTransactionSpy).toHaveBeenCalledTimes(1);
+
+    await sut.disconnect();
+  });
+
+  it('Should return ConnectionNoFoundError on commit if connection is no found', async () => {
+    const promise = sut.commit();
+
+    expect(commitTransactionSpy).not.toHaveBeenCalled();
     await expect(promise).rejects.toThrow(new ConnectionNoFoundError());
   });
 });
