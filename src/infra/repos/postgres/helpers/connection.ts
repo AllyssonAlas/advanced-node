@@ -6,6 +6,8 @@ import {
   QueryRunner,
 } from 'typeorm';
 
+import { ConnectionNoFoundError } from '@/infra/repos/postgres/helpers';
+
 export class PgConnection {
   private static instance?: PgConnection;
   private query?: QueryRunner;
@@ -26,6 +28,9 @@ export class PgConnection {
   }
 
   async disconnect(): Promise<void> {
+    if (!this.query) {
+      throw new ConnectionNoFoundError();
+    }
     await getConnection().close();
     this.query = undefined;
   }
