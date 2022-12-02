@@ -37,4 +37,9 @@ export class PgConnection {
     if (!this.query) throw new ConnectionNoFoundError();
     await this.query.startTransaction();
   }
+
+  async closeTransaction(): Promise<void> {
+    if (!this.query) throw new ConnectionNoFoundError();
+    await this.query.release();
+  }
 }
