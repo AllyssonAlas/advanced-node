@@ -15,6 +15,7 @@ module.exports = {
     "<rootDir>/src",
     "<rootDir>/tests"
   ],
+  setupFiles: ['dotenv/config'],
   testMatch: ['**/*.spec.ts'],
   transform: {
     '\\.ts$': 'ts-jest'
