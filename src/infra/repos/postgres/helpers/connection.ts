@@ -6,6 +6,7 @@ import {
   QueryRunner,
   Repository,
   ObjectType,
+  ObjectLiteral,
 } from 'typeorm';
 
 import { ConnectionNotFoundError } from '@/infra/repos/postgres/helpers';
@@ -55,7 +56,7 @@ export class PgConnection {
     await this.query.rollbackTransaction();
   }
 
-  getRepository<Entity extends ObjectType<Entity>>(entity: ObjectType<Entity>): Repository<Entity> {
+  getRepository<Entity extends ObjectLiteral>(entity: ObjectType<Entity>): Repository<Entity> {
     if (!this.query) throw new ConnectionNotFoundError();
     return this.query.manager.getRepository(entity);
   }
