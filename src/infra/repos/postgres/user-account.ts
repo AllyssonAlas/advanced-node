@@ -1,13 +1,13 @@
-import { getRepository } from 'typeorm';
-
 import { LoadUserAccount, SaveFacebookAccount } from '@/domain/contracts/repositories';
 import { PgUser } from '@/infra/repos/postgres/entities';
+import { PgRepository } from '@/infra/repos/postgres';
 
-// eslint-disable-next-line prettier/prettier
-export class PgUserAccountRepository implements LoadUserAccount, SaveFacebookAccount
+export class PgUserAccountRepository
+  extends PgRepository
+  implements LoadUserAccount, SaveFacebookAccount
 {
   async load(input: LoadUserAccount.Input): Promise<LoadUserAccount.Output> {
-    const pgUserRepo = getRepository(PgUser);
+    const pgUserRepo = this.getRepository(PgUser);
     const pgUser = await pgUserRepo.findOne(input);
     if (pgUser) {
       return {
@@ -23,7 +23,7 @@ export class PgUserAccountRepository implements LoadUserAccount, SaveFacebookAcc
     email,
     facebookId,
   }: SaveFacebookAccount.Input): Promise<SaveFacebookAccount.Output> {
-    const pgUserRepo = getRepository(PgUser);
+    const pgUserRepo = this.getRepository(PgUser);
     let resultId: string;
     if (!id) {
       const pgUser = await pgUserRepo.save({ name, email, facebookId });
