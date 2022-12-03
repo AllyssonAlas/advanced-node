@@ -3,6 +3,7 @@ import { getConnectionManager, createConnection, getConnection } from 'typeorm';
 import { mocked } from 'ts-jest/utils';
 
 import { PgConnection, ConnectionNoFoundError } from '@/infra/repos/postgres/helpers';
+import { PgUser } from '@/infra/repos/postgres/entities';
 
 jest.mock('typeorm', () => ({
   Entity: jest.fn(),
@@ -14,6 +15,7 @@ jest.mock('typeorm', () => ({
 }));
 
 describe('PgConnection', () => {
+  let getRepositorySpy: jest.Mock;
   let rollbackTransactionSpy: jest.Mock;
   let commitTransactionSpy: jest.Mock;
   let releaseSpy: jest.Mock;
@@ -30,6 +32,7 @@ describe('PgConnection', () => {
     hasSpy = jest.fn().mockReturnValue(true);
     getConnectionManagerSpy = jest.fn().mockReturnValue({ has: hasSpy });
     mocked(getConnectionManager).mockImplementation(getConnectionManagerSpy);
+    getRepositorySpy = jest.fn().mockReturnValue('any_repo');
     rollbackTransactionSpy = jest.fn();
     commitTransactionSpy = jest.fn();
     releaseSpy = jest.fn();
@@ -39,6 +42,7 @@ describe('PgConnection', () => {
       release: releaseSpy,
       commitTransaction: commitTransactionSpy,
       rollbackTransaction: rollbackTransactionSpy,
+      manager: { getRepository: getRepositorySpy },
     });
     createConnectionSpy = jest.fn().mockResolvedValue({ createQueryRunner: createQueryRunnerSpy });
     mocked(createConnection).mockImplementation(createConnectionSpy);
@@ -161,5 +165,21 @@ describe('PgConnection', () => {
 
     expect(rollbackTransactionSpy).not.toHaveBeenCalled();
     await expect(promise).rejects.toThrow(new ConnectionNoFoundError());
+  });
+
+  it('Should get repository', async () => {
+    await sut.connect();
+    const repository = sut.getRepository(PgUser);
+
+    expect(getRepositorySpy).toHaveBeenCalledWith(PgUser);
+    expect(getRepositorySpy).toHaveBeenCalledTimes(1);
+    expect(repository).toBe('any_repo');
+
+    await sut.disconnect();
+  });
+
+  it('Should return ConnectionNoFoundError on getRepository if connection is no found', async () => {
+    expect(getRepositorySpy).not.toHaveBeenCalled();
+    expect(() => sut.getRepository(PgUser)).toThrow(new ConnectionNoFoundError());
   });
 });
