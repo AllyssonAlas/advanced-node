@@ -4,6 +4,8 @@ import {
   getConnection,
   Connection,
   QueryRunner,
+  Repository,
+  ObjectType,
 } from 'typeorm';
 
 import { ConnectionNoFoundError } from '@/infra/repos/postgres/helpers';
@@ -51,5 +53,10 @@ export class PgConnection {
   async rollback(): Promise<void> {
     if (!this.query) throw new ConnectionNoFoundError();
     await this.query.rollbackTransaction();
+  }
+
+  getRepository<Entity extends ObjectType<Entity>>(entity: ObjectType<Entity>): Repository<Entity> {
+    if (!this.query) throw new ConnectionNoFoundError();
+    return this.query.manager.getRepository(entity);
   }
 }
