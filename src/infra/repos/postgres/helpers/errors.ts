@@ -1,6 +1,6 @@
-export class ConnectionNoFoundError extends Error {
+export class ConnectionNotFoundError extends Error {
   constructor() {
     super('No connection was found');
-    this.name = 'ConnectionNoFoundError';
+    this.name = 'ConnectionNotFoundError';
   }
 }

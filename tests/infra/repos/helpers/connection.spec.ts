@@ -2,7 +2,7 @@ import { getConnectionManager, createConnection, getConnection } from 'typeorm';
 
 import { mocked } from 'ts-jest/utils';
 
-import { PgConnection, ConnectionNoFoundError } from '@/infra/repos/postgres/helpers';
+import { PgConnection, ConnectionNotFoundError } from '@/infra/repos/postgres/helpers';
 import { PgUser } from '@/infra/repos/postgres/entities';
 
 jest.mock('typeorm', () => ({
@@ -92,11 +92,11 @@ describe('PgConnection', () => {
     expect(closeSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('Should return ConnectionNoFoundError on disconnect if connection is no found', async () => {
+  it('Should return ConnectionNotFoundError on disconnect if connection is not found', async () => {
     const promise = sut.disconnect();
 
     expect(closeSpy).not.toHaveBeenCalled();
-    await expect(promise).rejects.toThrow(new ConnectionNoFoundError());
+    await expect(promise).rejects.toThrow(new ConnectionNotFoundError());
   });
 
   it('Should open transaction', async () => {
@@ -109,11 +109,11 @@ describe('PgConnection', () => {
     await sut.disconnect();
   });
 
-  it('Should return ConnectionNoFoundError on openTransaction if connection is no found', async () => {
+  it('Should return ConnectionNotFoundError on openTransaction if connection is not found', async () => {
     const promise = sut.openTransaction();
 
     expect(startTransactionSpy).not.toHaveBeenCalled();
-    await expect(promise).rejects.toThrow(new ConnectionNoFoundError());
+    await expect(promise).rejects.toThrow(new ConnectionNotFoundError());
   });
 
   it('Should close transaction', async () => {
@@ -126,11 +126,11 @@ describe('PgConnection', () => {
     await sut.disconnect();
   });
 
-  it('Should return ConnectionNoFoundError on closeTransaction if connection is no found', async () => {
+  it('Should return ConnectionNotFoundError on closeTransaction if connection is not found', async () => {
     const promise = sut.closeTransaction();
 
     expect(releaseSpy).not.toHaveBeenCalled();
-    await expect(promise).rejects.toThrow(new ConnectionNoFoundError());
+    await expect(promise).rejects.toThrow(new ConnectionNotFoundError());
   });
 
   it('Should commit transaction', async () => {
@@ -143,11 +143,11 @@ describe('PgConnection', () => {
     await sut.disconnect();
   });
 
-  it('Should return ConnectionNoFoundError on commit if connection is no found', async () => {
+  it('Should return ConnectionNotFoundError on commit if connection is not found', async () => {
     const promise = sut.commit();
 
     expect(commitTransactionSpy).not.toHaveBeenCalled();
-    await expect(promise).rejects.toThrow(new ConnectionNoFoundError());
+    await expect(promise).rejects.toThrow(new ConnectionNotFoundError());
   });
 
   it('Should rollback transaction', async () => {
@@ -160,11 +160,11 @@ describe('PgConnection', () => {
     await sut.disconnect();
   });
 
-  it('Should return ConnectionNoFoundError on rollback if connection is no found', async () => {
+  it('Should return ConnectionNotFoundError on rollback if connection is not found', async () => {
     const promise = sut.commit();
 
     expect(rollbackTransactionSpy).not.toHaveBeenCalled();
-    await expect(promise).rejects.toThrow(new ConnectionNoFoundError());
+    await expect(promise).rejects.toThrow(new ConnectionNotFoundError());
   });
 
   it('Should get repository', async () => {
@@ -178,8 +178,8 @@ describe('PgConnection', () => {
     await sut.disconnect();
   });
 
-  it('Should return ConnectionNoFoundError on getRepository if connection is no found', async () => {
+  it('Should return ConnectionNotFoundError on getRepository if connection is not found', async () => {
     expect(getRepositorySpy).not.toHaveBeenCalled();
-    expect(() => sut.getRepository(PgUser)).toThrow(new ConnectionNoFoundError());
+    expect(() => sut.getRepository(PgUser)).toThrow(new ConnectionNotFoundError());
   });
 });

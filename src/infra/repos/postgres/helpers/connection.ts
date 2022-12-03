@@ -8,7 +8,7 @@ import {
   ObjectType,
 } from 'typeorm';
 
-import { ConnectionNoFoundError } from '@/infra/repos/postgres/helpers';
+import { ConnectionNotFoundError } from '@/infra/repos/postgres/helpers';
 
 export class PgConnection {
   private static instance?: PgConnection;
@@ -30,33 +30,33 @@ export class PgConnection {
   }
 
   async disconnect(): Promise<void> {
-    if (!this.query) throw new ConnectionNoFoundError();
+    if (!this.query) throw new ConnectionNotFoundError();
     await getConnection().close();
     this.query = undefined;
   }
 
   async openTransaction(): Promise<void> {
-    if (!this.query) throw new ConnectionNoFoundError();
+    if (!this.query) throw new ConnectionNotFoundError();
     await this.query.startTransaction();
   }
 
   async closeTransaction(): Promise<void> {
-    if (!this.query) throw new ConnectionNoFoundError();
+    if (!this.query) throw new ConnectionNotFoundError();
     await this.query.release();
   }
 
   async commit(): Promise<void> {
-    if (!this.query) throw new ConnectionNoFoundError();
+    if (!this.query) throw new ConnectionNotFoundError();
     await this.query.commitTransaction();
   }
 
   async rollback(): Promise<void> {
-    if (!this.query) throw new ConnectionNoFoundError();
+    if (!this.query) throw new ConnectionNotFoundError();
     await this.query.rollbackTransaction();
   }
 
   getRepository<Entity extends ObjectType<Entity>>(entity: ObjectType<Entity>): Repository<Entity> {
-    if (!this.query) throw new ConnectionNoFoundError();
+    if (!this.query) throw new ConnectionNotFoundError();
     return this.query.manager.getRepository(entity);
   }
 }
