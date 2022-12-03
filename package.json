@@ -44,7 +44,7 @@
   },
   "scripts": {
     "start": "node -r dotenv/config dist/main",
-    "dev": "ts-node-dev --respawn --transpile-only --inspect=0.0.0.0:9229 src/main",
+    "dev": "ts-node-dev --respawn --transpile-only -r dotenv/config --inspect=0.0.0.0:9229 src/main",
     "build": "rimraf dist && tsc -p tsconfig-build.json",
     "lint": "yarn eslint . --ext ts",
     "lint:fix": "yarn lint -- --fix",

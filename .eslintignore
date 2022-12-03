@@ -4,3 +4,4 @@ coverage
 jest.config.js
 jest.integration.config.js
 jest-unit-config.js
+ormconfig.js
