@@ -11,8 +11,9 @@ export class DbTransactionController {
       const httpResponse = await this.decoratee.perform(httpRequest);
       await this.db.commit();
       return httpResponse;
-    } catch {
+    } catch (error) {
       await this.db.rollback();
+      throw error;
     } finally {
       await this.db.closeTransaction();
     }
