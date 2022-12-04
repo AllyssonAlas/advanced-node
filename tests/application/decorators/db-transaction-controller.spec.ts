@@ -19,6 +19,10 @@ describe('DbTransactionController', () => {
     sut = new DbTransactionController(decoratee, db);
   });
 
+  it('Should extend controller', () => {
+    expect(sut).toBeInstanceOf(Controller);
+  });
+
   it('Should open transaction', async () => {
     await sut.perform({ any: 'any' });
 
