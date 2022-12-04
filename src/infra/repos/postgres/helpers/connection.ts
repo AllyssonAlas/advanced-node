@@ -7,13 +7,15 @@ import {
   Repository,
   ObjectType,
   ObjectLiteral,
+  getRepository,
 } from 'typeorm';
 
-import { ConnectionNotFoundError } from '@/infra/repos/postgres/helpers';
+import { ConnectionNotFoundError, TransactionNotFoundError } from '@/infra/repos/postgres/helpers';
 
 export class PgConnection {
   private static instance?: PgConnection;
   private query?: QueryRunner;
+  private connection?: Connection;
 
   private constructor() {}
 
@@ -26,38 +28,40 @@ export class PgConnection {
 
   async connect(): Promise<void> {
     const isConnectionActive = getConnectionManager().has('default');
-    const connection: Connection = isConnectionActive ? getConnection() : await createConnection();
-    this.query = connection.createQueryRunner();
+    this.connection = isConnectionActive ? getConnection() : await createConnection();
   }
 
   async disconnect(): Promise<void> {
-    if (!this.query) throw new ConnectionNotFoundError();
+    if (!this.connection) throw new ConnectionNotFoundError();
     await getConnection().close();
     this.query = undefined;
+    this.connection = undefined;
   }
 
   async openTransaction(): Promise<void> {
-    if (!this.query) throw new ConnectionNotFoundError();
+    if (!this.connection) throw new ConnectionNotFoundError();
+    this.query = this.connection.createQueryRunner();
     await this.query.startTransaction();
   }
 
   async closeTransaction(): Promise<void> {
-    if (!this.query) throw new ConnectionNotFoundError();
+    if (!this.query) throw new TransactionNotFoundError();
     await this.query.release();
   }
 
   async commit(): Promise<void> {
-    if (!this.query) throw new ConnectionNotFoundError();
+    if (!this.query) throw new TransactionNotFoundError();
     await this.query.commitTransaction();
   }
 
   async rollback(): Promise<void> {
-    if (!this.query) throw new ConnectionNotFoundError();
+    if (!this.query) throw new TransactionNotFoundError();
     await this.query.rollbackTransaction();
   }
 
   getRepository<Entity extends ObjectLiteral>(entity: ObjectType<Entity>): Repository<Entity> {
-    if (!this.query) throw new ConnectionNotFoundError();
-    return this.query.manager.getRepository(entity);
+    if (!this.connection) throw new ConnectionNotFoundError();
+    if (this.query) return this.query.manager.getRepository(entity);
+    return getRepository(entity);
   }
 }
