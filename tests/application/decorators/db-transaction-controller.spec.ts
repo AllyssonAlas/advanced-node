@@ -12,6 +12,7 @@ describe('DbTransactionController', () => {
   beforeAll(() => {
     db = mock();
     decoratee = mock();
+    decoratee.perform.mockResolvedValue({ statusCode: 204, data: null });
   });
 
   beforeEach(() => {
@@ -43,7 +44,7 @@ describe('DbTransactionController', () => {
   });
 
   it('Should call rollback and close transaction on failure', async () => {
-    decoratee.perform.mockRejectedValue(new Error('decoratee_error'));
+    decoratee.perform.mockRejectedValueOnce(new Error('decoratee_error'));
 
     await sut.perform({ any: 'any' });
 
@@ -52,5 +53,11 @@ describe('DbTransactionController', () => {
     expect(db.rollback).toHaveBeenCalledTimes(1);
     expect(db.closeTransaction).toHaveBeenCalledWith();
     expect(db.closeTransaction).toHaveBeenCalledTimes(1);
+  });
+
+  it('Should return same result as decoratee on success', async () => {
+    const httpResponse = await sut.perform({ any: 'any' });
+
+    expect(httpResponse).toEqual({ statusCode: 204, data: null });
   });
 });
