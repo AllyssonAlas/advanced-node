@@ -1,13 +1,21 @@
-import { mock } from 'jest-mock-extended';
+import { mock, MockProxy } from 'jest-mock-extended';
 
 import { DbTransactionController } from '@/application/decorators';
 import { DbTransaction } from '@/application/contracts';
 
 describe('DbTransactionController', () => {
-  it('Should open transaction', async () => {
-    const db = mock<DbTransaction>();
-    const sut = new DbTransactionController(db);
+  let db: MockProxy<DbTransaction>;
+  let sut: DbTransactionController;
 
+  beforeAll(() => {
+    db = mock();
+  });
+
+  beforeEach(() => {
+    sut = new DbTransactionController(db);
+  });
+
+  it('Should open transaction', async () => {
     await sut.perform({ any: 'any' });
 
     expect(db.openTransaction).toHaveBeenCalledWith();
